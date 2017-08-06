@@ -34,9 +34,10 @@ public class SelectRecipeFragment extends Fragment{
 
         mAdapter = new RecipeListAdapter(getContext(), recipes);
 
+    }
 
-
-
+    public static SelectRecipeFragment newInstance(){
+        return new SelectRecipeFragment();
     }
 
     @Override

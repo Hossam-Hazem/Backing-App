@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -22,6 +24,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,9 +34,12 @@ import nanodegree.hossamhazem.backingapp.utils.RecipeStep;
 
 public class ViewRecipeStepFragment extends Fragment {
     @BindView(R.id.videoView) SimpleExoPlayerView simpleExoPlayerView;
+    @BindView(R.id.imageView) ImageView imageView;
+    @BindView(R.id.mediaLayout) FrameLayout mediaLayout;
     @Nullable @BindView(R.id.recipeStepDescription) TextView recipeStepDescription;
     @Nullable @BindView(R.id.prevRecipeStepButton) Button prevRecipeStepButton;
     @Nullable @BindView(R.id.nextRecipeStepButton) Button nextRecipeStepButton;
+
     private SimpleExoPlayer mExoPlayer;
 
     RecipeStep recipeStep;
@@ -41,7 +47,7 @@ public class ViewRecipeStepFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null && savedInstanceState.containsKey("recipeStep")){
+        if (savedInstanceState != null && savedInstanceState.containsKey("recipeStep")) {
             recipeStep = savedInstanceState.getParcelable("recipeStep");
         }
     }
@@ -55,30 +61,43 @@ public class ViewRecipeStepFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_view_recipe_step, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_recipe_step, container, false);
         ButterKnife.bind(this, view);
         bind();
 
         return view;
     }
 
-    public void setRecipeStep(RecipeStep recipeStep){
+    public void setRecipeStep(RecipeStep recipeStep) {
         this.recipeStep = recipeStep;
     }
 
-    public void bind(){
-        if(recipeStepDescription != null) {
+    public void bind() {
+        if (recipeStepDescription != null) {
             String desc = recipeStep.getDescription();
             recipeStepDescription.setText(desc);
         }
 
-        if(recipeStep.getMediaType() == MediaType.VIDEO)
-            initExoPlayer(recipeStep.getMediaURL());
-        else
-            simpleExoPlayerView.setVisibility(View.GONE);
+        switch (recipeStep.getMediaType()) {
+            case VIDEO: {
+                initExoPlayer(recipeStep.getMediaURL());
+                imageView.setVisibility(View.GONE);
+                break;
+            }
+            case IMAGE: {
+                Picasso.with(getContext()).load(recipeStep.getMediaURL()).fit().centerCrop().into(imageView);
+                simpleExoPlayerView.setVisibility(View.GONE);
+                break;
+            }
+            case NONE: {
+                imageView.setVisibility(View.GONE);
+                simpleExoPlayerView.setVisibility(View.GONE);
+                mediaLayout.setVisibility(View.GONE);
+                break;
+            }
+        }
 
-
-        if(prevRecipeStepButton != null && nextRecipeStepButton != null) {
+        if (prevRecipeStepButton != null && nextRecipeStepButton != null) {
             prevRecipeStepButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -95,7 +114,7 @@ public class ViewRecipeStepFragment extends Fragment {
         }
     }
 
-    private void initExoPlayer(Uri mediaUri){
+    private void initExoPlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -118,16 +137,16 @@ public class ViewRecipeStepFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(recipeStep.getMediaType() == MediaType.VIDEO)
+    public void onStop() {
+        super.onStop();
+        if (recipeStep.getMediaType() == MediaType.VIDEO)
             releasePlayer();
     }
 
 
-
-    interface RecipeStepFragmentActivityInterface{
+    interface RecipeStepFragmentActivityInterface {
         void nextRecipeStepOnClick(RecipeStep recipeStep);
+
         void prevRecipeStepOnClick(RecipeStep recipeStep);
     }
 }

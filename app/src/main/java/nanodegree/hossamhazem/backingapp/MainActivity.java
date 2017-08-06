@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             loaderManager.initLoader(GET_RECIPES_LOADER, null,  this);
         }
 
-        selectRecipeFragment = new SelectRecipeFragment();
+        selectRecipeFragment = SelectRecipeFragment.newInstance();
         selectRecipeFragment.setRecipes(recipes);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.mainContainer, selectRecipeFragment,"selectRecipeFragment")

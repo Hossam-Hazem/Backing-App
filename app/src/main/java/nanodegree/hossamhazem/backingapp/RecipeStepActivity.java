@@ -39,14 +39,8 @@ public class RecipeStepActivity extends AppCompatActivity implements RecipeStepL
         mainRecipeStepFragment = new SelectRecipeStepFragment();
         mainRecipeStepFragment.setRecipe(recipe);
 
-        if(isTablet){
-            recipeStepSelectContainerId = R.id.selectRecipeContainer;
-            recipeStepViewContainerId = R.id.viewRecipeContainer;
-        }
-        else {
-            recipeStepSelectContainerId = R.id.mainContainer;
-            recipeStepViewContainerId = R.id.mainContainer;
-        }
+        recipeStepSelectContainerId = isTablet ? R.id.selectRecipeContainer : R.id.mainContainer;
+        recipeStepViewContainerId = isTablet ? R.id.viewRecipeContainer : R.id.mainContainer;
 
         SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE).edit();
         editor.putStringSet("data", recipe.getIngredientsInStringSet());
