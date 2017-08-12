@@ -5,8 +5,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.RemoteViews;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Implementation of App Widget functionality.
@@ -61,7 +64,8 @@ public class HomeBackingAppWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-        recipeName = intent.getStringExtra("name");
+        SharedPreferences sharedPref = context.getSharedPreferences(RecipeStepActivity.SHARED_PREF_NAME, MODE_PRIVATE);
+        recipeName = sharedPref.getString("recipeName", "error");
 
         if(intent.getAction().equals(UPDATE_ACTION)){
 

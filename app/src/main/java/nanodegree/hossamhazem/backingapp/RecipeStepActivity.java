@@ -42,10 +42,6 @@ public class RecipeStepActivity extends AppCompatActivity implements RecipeStepL
         recipeStepSelectContainerId = isTablet ? R.id.selectRecipeContainer : R.id.mainContainer;
         recipeStepViewContainerId = isTablet ? R.id.viewRecipeContainer : R.id.mainContainer;
 
-        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE).edit();
-        editor.putStringSet("data", recipe.getIngredientsInStringSet());
-        editor.apply();
-
         updateWidget();
 
 
@@ -62,8 +58,11 @@ public class RecipeStepActivity extends AppCompatActivity implements RecipeStepL
     }
 
     private void updateWidget() {
+        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE).edit();
+        editor.putStringSet("data", recipe.getIngredientsInStringSet());
+        editor.putString("recipeName",recipe.getName());
+        editor.apply();
         Intent i = new Intent(this, HomeBackingAppWidget.class);
-        i.putExtra("name",recipe.getName());
         i.setAction(HomeBackingAppWidget.UPDATE_ACTION);
         sendBroadcast(i);
     }

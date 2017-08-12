@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/videoView"
+    <FrameLayout
+        android:id="@+id/mediaLayout"
         android:layout_width="0dp"
         android:layout_height="500dp"
         android:layout_marginEnd="8dp"
@@ -17,7 +17,16 @@
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/videoView"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/recipeStepDescription"
@@ -33,7 +42,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/videoView"
+        app:layout_constraintTop_toBottomOf="@+id/mediaLayout"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintBottom_toBottomOf="parent" />
 
