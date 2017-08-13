@@ -131,9 +131,12 @@ public class ViewRecipeStepFragment extends Fragment {
     }
 
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mExoPlayer == null) {
+            return;
+        }
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
     }
 
     @Override
@@ -141,6 +144,21 @@ public class ViewRecipeStepFragment extends Fragment {
         super.onStop();
         if (recipeStep.getMediaType() == MediaType.VIDEO)
             releasePlayer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recipeStep.getMediaType() == MediaType.VIDEO)
+            releasePlayer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       if(recipeStep.getMediaType()==MediaType.VIDEO){
+           initExoPlayer(recipeStep.getMediaURL());
+       }
     }
 
 

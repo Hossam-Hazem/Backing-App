@@ -1,10 +1,16 @@
 package nanodegree.hossamhazem.backingapp;
 
+import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +78,11 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             @Override
             public String loadInBackground() {
 
+                if(!checkConnection()){
+                    makeSnack("No internet connection");
+                    return null;
+                }
+
                 try {
                     return NetworkUtils.getResponseFromHttpUrl(new URL(recipesUrl));
                 } catch (IOException e) {
@@ -85,8 +96,12 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         try {
+            if(data == null || data.isEmpty()){
+                makeSnack("Error loading data");
+            }
             setRecipes(data);
         } catch (JSONException e) {
+
             e.printStackTrace();
         }
 
@@ -113,6 +128,18 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     public void updateRecipes(ArrayList<Recipe> recipes){
         this.recipes = recipes;
         selectRecipeFragment.updateRecipes(recipes);
+    }
+
+    private boolean checkConnection() {
+        ConnectivityManager
+                cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null
+                && activeNetwork.isConnectedOrConnecting();
+    }
+
+    private void makeSnack(String message){
+        Snackbar.make(findViewById(R.id.mainContainer), message,  Snackbar.LENGTH_LONG).show();
     }
 
 
