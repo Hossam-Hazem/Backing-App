@@ -38,6 +38,9 @@ public class SelectRecipeStepFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("recipe", recipe);
+
+        int lastPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        outState.putInt("lastPosition",lastPosition);
     }
 
     @Nullable
@@ -60,6 +63,13 @@ public class SelectRecipeStepFragment extends Fragment {
                 f.showDialog();
             }
         });
+
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey("lastPosition")){
+                int lastPosition = savedInstanceState.getInt("lastPosition");
+                mLayoutManager.scrollToPosition(lastPosition);
+            }
+        }
 
         return view;
     }

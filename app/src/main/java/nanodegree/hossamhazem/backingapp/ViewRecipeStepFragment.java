@@ -47,8 +47,11 @@ public class ViewRecipeStepFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey("recipeStep")) {
-            recipeStep = savedInstanceState.getParcelable("recipeStep");
+        if (savedInstanceState != null) {
+            if(savedInstanceState.containsKey("recipeStep")) {
+                recipeStep = savedInstanceState.getParcelable("recipeStep");
+            }
+
         }
     }
 
@@ -56,6 +59,7 @@ public class ViewRecipeStepFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("recipeStep", recipeStep);
+        outState.putLong("exoPlayerViewPosition",simpleExoPlayerView.getPlayer().getCurrentPosition());
     }
 
     @Nullable
@@ -64,7 +68,12 @@ public class ViewRecipeStepFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_recipe_step, container, false);
         ButterKnife.bind(this, view);
         bind();
-
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey("exoPlayerViewPosition")) {
+                long position = savedInstanceState.getLong("exoPlayerViewPosition");
+                simpleExoPlayerView.getPlayer().seekTo(position);
+            }
+        }
         return view;
     }
 

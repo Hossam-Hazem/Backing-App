@@ -2,6 +2,7 @@ package nanodegree.hossamhazem.backingapp;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,19 +26,23 @@ public class SelectRecipeFragment extends Fragment{
     @BindBool(R.bool.isTablet) boolean isTablet;
     private RecipeListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private int lastScrolledPosition;
     ArrayList<Recipe> recipes;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
         mAdapter = new RecipeListAdapter(getContext(), recipes);
+
+
+        setRetainInstance(true);
 
     }
 
-    public static SelectRecipeFragment newInstance(){
-        return new SelectRecipeFragment();
+    public static SelectRecipeFragment newInstance(ArrayList<Recipe> recipes){
+        SelectRecipeFragment x =  new SelectRecipeFragment();
+        x.setRecipes(recipes);
+        return x;
     }
 
     @Override
@@ -46,15 +51,18 @@ public class SelectRecipeFragment extends Fragment{
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_select_recipe, container, false);
 
+
+
         ButterKnife.bind(this, view);
 
-        if(isTablet) {
+        mRecyclerView.setAdapter(mAdapter);
+        if (isTablet) {
             mLayoutManager = new GridLayoutManager(getContext(), 3);
-        }
-        else
+        } else
             mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        if(isTablet) {
+
+        if (isTablet) {
             mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -69,10 +77,51 @@ public class SelectRecipeFragment extends Fragment{
                 }
             });
         }
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey("lastPosition")){
+                int lastPosition = savedInstanceState.getInt("lastPosition");
+                mLayoutManager.scrollToPosition(lastPosition);
+            }
+        }
 
-        mRecyclerView.setAdapter(mAdapter);
+
+
+
+
+
 
         return view;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(isTablet == false){
+            int lastPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+            outState.putInt("lastPosition", lastPosition);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(savedInstanceState != null) {
+
+        }
     }
 
     public void setRecipes(ArrayList<Recipe> recipes){

@@ -7,4 +7,5 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="empty_view_text"> empty </string>
+    <string name="title_activity_display_message"> Recipe </string>
 </resources>

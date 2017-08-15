@@ -34,6 +34,9 @@ public class RecipeStepActivity extends AppCompatActivity implements RecipeStepL
         Intent intent = getIntent();
         recipe = intent.getParcelableExtra("recipe");
 
+        getSupportActionBar().setTitle(recipe.getName());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         mainRecipeStepFragment = new SelectRecipeStepFragment();
@@ -55,6 +58,8 @@ public class RecipeStepActivity extends AppCompatActivity implements RecipeStepL
                 openViewRecipeStepFragment(recipeStepViewContainerId, recipeStep, false);
             }
         }
+
+
     }
 
     private void updateWidget() {

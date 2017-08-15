@@ -35,13 +35,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("recipes")){
-            recipes = (ArrayList<Recipe>) savedInstanceState.getSerializable("recipes");
-        }
-        else{
-            recipes = new ArrayList<>();
-        }
-
         LoaderManager loaderManager = this.getSupportLoaderManager();
         Loader<String> recipesLoader = loaderManager.getLoader(GET_RECIPES_LOADER);
 
@@ -49,11 +42,22 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             loaderManager.initLoader(GET_RECIPES_LOADER, null,  this);
         }
 
-        selectRecipeFragment = SelectRecipeFragment.newInstance();
-        selectRecipeFragment.setRecipes(recipes);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.mainContainer, selectRecipeFragment,"selectRecipeFragment")
-                .commit();
+        if(savedInstanceState != null && savedInstanceState.containsKey("recipes")){
+            recipes = (ArrayList<Recipe>) savedInstanceState.getSerializable("recipes");
+        }
+        else{
+            recipes = new ArrayList<>();
+            selectRecipeFragment = SelectRecipeFragment.newInstance(recipes);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.mainContainer, selectRecipeFragment,"selectRecipeFragment")
+                    .commit();
+        }
+
+
+
+
+
+
 
     }
 
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
                 makeSnack("Error loading data");
             }
             setRecipes(data);
-        } catch (JSONException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
         }
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     }
 
 
-    private void setRecipes(String jsonString) throws JSONException {
+    private void setRecipes(String jsonString) throws Exception {
         ArrayList<Recipe> result = new ArrayList<>();
         JSONArray recipesArray = new JSONArray(jsonString);
         for(int c = 0; c<recipesArray.length(); c++){
